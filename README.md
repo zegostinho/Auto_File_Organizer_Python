@@ -49,7 +49,7 @@ Make sure Python 3 is installed on your system.
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/zegostinho/Auto_File_Organizer_Python
 cd file-organizer
 ```
 
