@@ -1,0 +1,11 @@
+main_backup.py
+teste.py
+.DS_Store
+env/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.idea/
+.env
+*.log
