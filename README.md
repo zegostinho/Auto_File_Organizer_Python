@@ -47,7 +47,7 @@ The application follows these steps:
 
 ### Prerequisites
 
-Make sure Python 3 is installed on your system.
+Make sure Python 3.14 or later is installed on your system.
 
 ### Installation
 
