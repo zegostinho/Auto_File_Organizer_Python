@@ -17,6 +17,18 @@ def find_destination(file, file_category, dir_path):
             break
     return destination_cat
 
+def resolve_folder_conflicts(files, destinations):
+    renamed_files = {}
+    for d in set(destinations.values()):
+        for f in files:
+            if f.stem == d.name:
+                old_path = f.parent / f.name
+                new_path = f.parent / (f.stem + "_file" + f.suffix)
+                f.rename(new_path)
+                renamed_files[old_path] = new_path
+
+    return renamed_files
+
 
 def create_folders(folder_destinations):
     for d in set(folder_destinations.values()):
@@ -51,7 +63,7 @@ def organize_files(folder_path, categories):
     files = [file for file in folder_path.iterdir() if file.is_file() and not file.name.startswith(".")]
     total_files = len(files)
 
-    # Verificar a categoria de cada ficheiro
+    # Verify each file's category
     destinations = {}
     file_counts = {}
     for file in files:
@@ -62,15 +74,26 @@ def organize_files(folder_path, categories):
             file_counts[destination.name] = 0
         file_counts[destination.name] += 1
 
-    # Criar as pastas necessárias
+    # Resolve name conflicts for folder creation
+    renamed_files = resolve_folder_conflicts(files, destinations)
+    for i, file in enumerate(files):
+        if file in renamed_files:
+            files[i] = renamed_files[file]
+
+    for old_path, new_path in renamed_files.items():
+        destination = destinations.pop(old_path)
+        destinations[new_path] = destination
+
+
+    # Create the necessary folders
     create_folders(destinations)
 
 
-    # Mover ficheiros para a pasta certa
+    # Move files to the right folder
     for file in files:
         destination = destinations[file]
 
-        # Renomear ficheiros com nomes repetidos
+        # Rename files with the same name
         new_file_name = get_unique_name(file, destination)
         if new_file_name == file.name:
             file.move_into(destination)
@@ -87,12 +110,12 @@ while not path.is_dir():
 
 
 print("Organizing files...\n")
-organized_f, num_f = organize_files(path, category)
+organized_files, num_files = organize_files(path, category)
 
-for key, value in num_f.items():
+for key, value in num_files.items():
     if value == 1:
         print(f"✅ {value} file moved to {key}")
     else:
         print(f"✅ {value} files moved to {key}")
 
-print(f"\nDone! {organized_f} files organized.")
+print(f"\nDone! {organized_files} files organized.")
